@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "h556.1 MediaPlayer"
