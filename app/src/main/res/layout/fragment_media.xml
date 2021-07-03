@@ -63,8 +63,11 @@
         />
     <ImageView
         android:id="@+id/image_music"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintHeight_percent="0.45"
+        android:scaleType="centerCrop"
         android:src="@drawable/music_fon_1"
         app:layout_constraintBottom_toTopOf="@id/txt_music_artist"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -58,6 +58,7 @@ class MediaFragment : Fragment() {
             mediaPlayer=null
             mediaPlayer = MediaPlayer.create(context, Uri.parse(MyData.list[position].musicPath))
             mediaPlayer?.start()
+            root.btn_pause.background = resources.getDrawable(R.drawable.ic_pause)
             root.seekbar.max = mediaPlayer?.duration!!
             handler = Handler(activity?.mainLooper!!)
 
@@ -94,21 +95,23 @@ class MediaFragment : Fragment() {
         })
 
         root.btn_back_30.setOnClickListener {
-            mediaPlayer?.seekTo(mediaPlayer?.currentPosition!!.minus(3000))
+            mediaPlayer?.seekTo(mediaPlayer?.currentPosition!!.minus(30000))
         }
         root.btn_next_30.setOnClickListener {
-            mediaPlayer?.seekTo(mediaPlayer?.currentPosition!!.plus(3000))
+            mediaPlayer?.seekTo(mediaPlayer?.currentPosition!!.plus(30000))
         }
 
         root.image_menu_more.setOnClickListener {
-            mediaPlayer?.pause()
-            findNavController().navigate(R.id.listFragment)
+            releaseMP()
+            findNavController().popBackStack()
         }
         root.btn_pause.setOnClickListener {
             if (mediaPlayer?.isPlaying!!){
                 mediaPlayer?.pause()
+                root.btn_pause.background = resources.getDrawable(R.drawable.ic_play)
             }else{
                 mediaPlayer?.start()
+                root.btn_pause.background = resources.getDrawable(R.drawable.ic_pause)
             }
         }
         root.btn_next_music.setOnClickListener {
@@ -153,21 +156,23 @@ class MediaFragment : Fragment() {
     private var runnable = object :Runnable{
         override fun run() {
 
-            if (mediaPlayer!=null)
-            root.seekbar.progress = mediaPlayer?.currentPosition!!
-            root.txt_music_time_position.text = milliSecondsToTimer(mediaPlayer?.currentPosition!!.toLong())
-            if (root.seekbar.progress == mediaPlayer?.duration){
-                releaseMP()
-                if (++position<MyData.list.size) {
+            if (mediaPlayer != null) {
+                root.seekbar.progress = mediaPlayer?.currentPosition!!
+                root.txt_music_time_position.text =
+                    milliSecondsToTimer(mediaPlayer?.currentPosition!!.toLong())
+                if (root.txt_music_time_position.text.toString() == root.txt_all_time_music.text.toString()) {
                     releaseMP()
-                    onResume()
-                }else{
-                    position = 0
-                    releaseMP()
-                    onResume()
+                    if (++position < MyData.list.size) {
+                        releaseMP()
+                        onResume()
+                    } else {
+                        position = 0
+                        releaseMP()
+                        onResume()
+                    }
                 }
+                handler.postDelayed(this, 100)
             }
-            handler.postDelayed(this, 100)
         }
     }
 

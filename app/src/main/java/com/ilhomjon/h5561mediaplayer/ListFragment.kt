@@ -6,6 +6,7 @@ import Models.Music
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.github.florent37.runtimepermission.kotlin.askPermission
@@ -77,6 +79,20 @@ class ListFragment : Fragment() {
 
 
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (ContextCompat.checkSelfPermission(root.context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            val musicList: MutableList<Music> = context?.musicFiles()!!
+            MyData.list = musicList as ArrayList
+            val adapter = RvAdapter(musicList, object : RvItemClick{
+                override fun itemClick(music: Music, position: Int) {
+                    findNavController().navigate(R.id.mediaFragment, bundleOf("music" to music, "position" to position))
+                }
+            })
+            root.rv.adapter = adapter
+        }
     }
 
 
